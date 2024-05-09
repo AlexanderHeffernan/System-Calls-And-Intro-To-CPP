@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <ctype.h>
 
+#define BUFFER_LEN 100
+
 void error (const char *msg)
 {
     printf("Error : %s\n", msg);
@@ -76,6 +78,25 @@ void listen_for_incoming_connection(int fd)
 } 
 
 /**
+ * Receives a message from a client into the provided buffer.
+ *
+ * @param client_fd - The file descriptor of the client socket.
+ * @param buffer - A pointer to the buffer where the received message will be stored.
+ * @return - The number of bytes received, or -1 if an error occurs.
+ */
+char receive_client_message(int client_fd, char* buffer)
+{
+    // Receive the message from the client
+    ssize_t bytes_received = recv(client_fd, buffer, BUFFER_LEN, 0);
+
+    // Check if the message was successfully received
+    if (bytes_received < 0)
+        error("Unable to receive client message\n");
+
+    return bytes_received;
+}
+
+/**
  * Entry point of the server program.
  */
 int main()
@@ -89,6 +110,20 @@ int main()
     listen_for_incoming_connection(fd);
     // Main loop to handle client connections
     while (1) {
+        int client_fd = accept_client_connection(fd);
 
+        // Fork a child process
+        pid_t pid = fork();
+
+        if (pid == -1) { // Fork failed
+            close(client_fd);
+        }
+        else if (pid == 0) { // Child process
+            close(fd); // Close listening socket in child process
+
+            // Retrieve the client's request
+            char buffer[BUFFER_LEN];
+            receive_client_message(client_fd, buffer);
+        }
     }
 }
