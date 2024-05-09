@@ -161,6 +161,17 @@ int main()
             receive_client_message(client_fd, buffer);
 
             char * reversed_buffer = reverse_string(buffer);
+
+            send_message_to_client(client_fd, reversed_buffer);
+
+            close(client_fd);
+            exit(1);
+        }
+        else { // Parent process
+            close(client_fd); // Close client socket in parent process
         }
     }
+
+    close(fd);
+    return 0;
 }
