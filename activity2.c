@@ -75,7 +75,28 @@ void listen_for_incoming_connection(int fd)
         error("Unable to listen for incoming connection\n");
 
     printf("Listen successful\n");
-} 
+}
+
+/**
+ * Accepts an incoming client connection on a socket.
+ *
+ * @param fd - The file descriptor of a socket.
+ * @return - The file descriptor of the accepted client connection.
+ */
+int accept_client_connection(int fd)
+{
+    struct sockaddr_in client_addr;
+    int addrlen = sizeof(client_addr);
+
+    // Accept an incoming client connection
+    int client_fd = accept(fd, (struct sockaddr *)&client_addr, (socklen_t*)&addrlen);
+
+    // Check if accepting the client connection was successful
+    if (client_fd < 0)
+        error("Unable to accept client connection\n");
+
+    return client_fd;
+}
 
 /**
  * Receives a message from a client into the provided buffer.
