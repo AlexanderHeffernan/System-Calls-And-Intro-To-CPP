@@ -7,11 +7,11 @@
 /**
  * Prints a specified error message to the console and exits the program.
  *
- * @param message - Message to print to the console.
+ * @param msg - Message to print to the console.
  */
-void error (char[] message)
+void error (char *msg)
 {
-    printf(message);
+    printf(msg);
     exit(1);
 }
 
