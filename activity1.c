@@ -7,7 +7,7 @@
 int main()
 {
     int pid, ret_exec, status;
-    pid=fork();
+    pid = fork();
 
     switch(pid){
         case -1:
@@ -15,13 +15,13 @@ int main()
             exit(1);
 
         case 0:
-            if (execl("/bin/ps", "ps", "-A", NULL) == -1) {
+            ret_exec = execl("/bin/ps", "ps", "-A", NULL);
+            if (ret_exec == -1) {
                 perror("Error executing exec");
                 exit(1);
             }
         default:
-            int status;
-            waitpid(pid, &status, 0);
+            pid = wait(&status);
 
             if (WIFEXITED(status)) {
                 printf("Parent Process ID: %d\n", getpid());
