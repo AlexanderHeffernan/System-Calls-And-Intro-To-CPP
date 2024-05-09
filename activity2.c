@@ -97,6 +97,41 @@ char receive_client_message(int client_fd, char* buffer)
 }
 
 /**
+ * Sends a message to a client.
+ *
+ * @param client_fd - The file descriptor of the client socket.
+ */
+void send_message_to_client(int client_fd, char msg[])
+{
+    ssize_t bytes_sent = send(client_fd, msg, strlen(msg), 0);
+
+    // Check if the message was successfuly sent
+    if (bytes_sent < 0)
+        error("Unable to send message to client\n");
+}
+
+/**
+ * Reverses a given string in place.
+ *
+ * @param str - The string to be reversed;
+ * @return - The reversed string.
+ */
+char* reverse_string(char str[])
+{
+    int length = strlen(str);
+
+    // Iterate through the first half of the string
+    for (int i = 0; i < length / 2; i++) {
+        // Swap characters from the beginning and end
+        char temp = str[i];
+        str[i] = str[length - 1 - i];
+        str[length - 1 - i] = temp;
+    }
+
+    return str;
+}
+
+/**
  * Entry point of the server program.
  */
 int main()
@@ -124,6 +159,8 @@ int main()
             // Retrieve the client's request
             char buffer[BUFFER_LEN];
             receive_client_message(client_fd, buffer);
+
+            char * reversed_buffer = reverse_string(buffer);
         }
     }
 }
